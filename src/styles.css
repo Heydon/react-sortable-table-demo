@@ -4,6 +4,11 @@
   margin: 1rem;
 }
 
+:focus {
+  box-shadow: 0 0 0 4px DodgerBlue;
+  outline: none;
+}
+
 * {
   box-sizing: border-box;
 }
