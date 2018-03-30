@@ -51,16 +51,25 @@ class Table extends React.Component {
       tabindex: scrollable ? '0' : null
     });
   }
-
   render() {
+    const captionID = 'caption-' + Math.random().toString(36).substr(2, 9);
     return (
       <div>
         <div
           className="table-container"
           ref="container"
-          tabIndex={this.state.tabindex}>
+          tabIndex={this.state.tabindex}
+          aria-labelledby={captionID}
+        >
           <table>
-            <caption>{this.props.caption}</caption>
+            <caption id={captionID}>
+              {this.props.caption}
+              {this.state.tabindex === '0' &&
+                <div>
+                  <small>(scroll to see more)</small>
+                </div>
+              }
+            </caption>
             <tbody>
               <tr>
                 {this.props.headers.map((header, i) =>

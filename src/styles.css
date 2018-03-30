@@ -59,6 +59,7 @@ tr:not(:first-child):not(:last-child) th {
 caption {
   margin-bottom: 0.5rem;
   font-style: italic;
+  text-align: left;
 }
 
 .lists-container {
