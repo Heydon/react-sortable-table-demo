@@ -10,7 +10,7 @@ class App extends Component {
       ['Napalm Death', 'Barney Greenway', '1981', 'Century Media'],
       ['Carcass', 'Jeff Walker', '1985', 'Earache'],
       ['Extreme Noise Terror', 'Dean Jones', '1985', 'Candlelight'],
-      ['Discordance Axis', 'Jon Chang', '1982', 'Hydrahead']
+      ['Discordance Axis', 'Jon Chang', '1992', 'Hydrahead']
     ];
     return (
       <div className="App">
