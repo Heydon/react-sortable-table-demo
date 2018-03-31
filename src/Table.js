@@ -81,7 +81,7 @@ class Table extends React.Component {
                     {header}
                     {this.props.sortable &&
                       <button
-                        aria-label={`sort by ${header}`}
+                        aria-label={`sort by ${header} in ${this.state.sortDir !== 'ascending' ? 'ascending' : 'descending'} order`}
                         onClick={() => this.sortBy(i)}>
                         <Arrow
                           sortDir={this.state.sortDir}
