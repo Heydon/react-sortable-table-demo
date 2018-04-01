@@ -45,8 +45,8 @@ class Table extends React.Component {
   }
 
   componentDidMount() {
-    let container = ReactDOM.findDOMNode(this.refs.container);
-    let scrollable = container.scrollWidth > container.clientWidth;
+    const {scrollWidth, clientWidth} = this.container;
+    let scrollable = scrollWidth > clientWidth;
     this.setState({
       tabindex: scrollable ? '0' : null
     });
@@ -57,7 +57,7 @@ class Table extends React.Component {
       <div>
         <div
           className="table-container"
-          ref="container"
+          ref={container => this.container = container}
           tabIndex={this.state.tabindex}
           aria-labelledby={captionID}
         >
