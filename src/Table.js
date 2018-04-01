@@ -1,5 +1,4 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 
 const Arrow = props => {
   let ascending = props.sortDir === 'ascending';
@@ -18,13 +17,14 @@ const Arrow = props => {
 
 class Table extends React.Component {
   constructor(props) {
-    super(props)
+    super(props);
     this.state = {
       tabindex: null,
       rows: props.rows,
       sortedBy: null,
       sortDir: 'none'
-    }
+    };
+    this.container = React.createRef();
     this.sortBy = this.sortBy.bind(this);
   }
 
@@ -45,8 +45,8 @@ class Table extends React.Component {
   }
 
   componentDidMount() {
-    let container = ReactDOM.findDOMNode(this.refs.container);
-    let scrollable = container.scrollWidth > container.clientWidth;
+    const {scrollWidth, clientWidth} = this.container.current;
+    let scrollable = scrollWidth > clientWidth;
     this.setState({
       tabindex: scrollable ? '0' : null
     });
@@ -57,7 +57,7 @@ class Table extends React.Component {
       <div>
         <div
           className="table-container"
-          ref="container"
+          ref={this.container}
           tabIndex={this.state.tabindex}
           aria-labelledby={captionID}
         >
