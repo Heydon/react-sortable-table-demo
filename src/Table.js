@@ -17,13 +17,14 @@ const Arrow = props => {
 
 class Table extends React.Component {
   constructor(props) {
-    super(props)
+    super(props);
     this.state = {
       tabindex: null,
       rows: props.rows,
       sortedBy: null,
       sortDir: 'none'
     }
+    this.container = React.createRef();
     this.sortBy = this.sortBy.bind(this);
   }
 
@@ -56,7 +57,7 @@ class Table extends React.Component {
       <div>
         <div
           className="table-container"
-          ref={container => this.container = container}
+          ref={this.container}
           tabIndex={this.state.tabindex}
           aria-labelledby={captionID}
         >
