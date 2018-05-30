@@ -60,6 +60,7 @@ class Table extends React.Component {
           ref={this.container}
           tabIndex={this.state.tabindex}
           aria-labelledby={captionID}
+          role="group"
         >
           <table>
             <caption id={captionID}>
