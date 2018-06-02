@@ -26,6 +26,7 @@ class Table extends React.Component {
     }
     this.container = React.createRef();
     this.sortBy = this.sortBy.bind(this);
+    this.captionID = 'caption-' + Math.random().toString(36).substr(2, 9);
   }
 
   sortBy(i) {
@@ -52,18 +53,17 @@ class Table extends React.Component {
     });
   }
   render() {
-    const captionID = 'caption-' + Math.random().toString(36).substr(2, 9);
     return (
       <div>
         <div
           className="table-container"
           ref={this.container}
           tabIndex={this.state.tabindex}
-          aria-labelledby={captionID}
+          aria-labelledby={this.captionID}
           role="group"
         >
           <table>
-            <caption id={captionID}>
+            <caption id={this.captionID}>
               {this.props.caption}
               {this.state.tabindex === '0' &&
                 <div>
