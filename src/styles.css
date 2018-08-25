@@ -31,7 +31,8 @@ table {
   border-collapse: collapse;
 }
 
-th, td {
+th,
+td {
   border: 2px solid #000;
   padding: 0.75rem;
   text-align: left;
@@ -115,4 +116,14 @@ th svg {
   fill: none;
   width: auto;
   height: 1.5em;
+}
+
+.visually-hidden {
+  position: absolute !important;
+  clip: rect(1px, 1px, 1px, 1px) !important;
+  padding: 0 !important;
+  border: 0 !important;
+  height: 1px !important;
+  width: 1px !important;
+  overflow: hidden !important;
 }
