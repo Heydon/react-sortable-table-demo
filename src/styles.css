@@ -9,6 +9,10 @@
   outline: none;
 }
 
+div:not([tabindex]):focus {
+  box-shadow: none;
+}
+
 * {
   box-sizing: border-box;
 }
