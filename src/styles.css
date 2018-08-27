@@ -114,7 +114,7 @@ th svg {
   stroke-linecap: round;
   stroke-linejoin: round;
   fill: none;
-  width: auto;
+  width: 1.5rem;
   height: 1.5em;
 }
 
