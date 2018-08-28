@@ -42,9 +42,13 @@ class Table extends React.Component {
       sortDir = 'ascending';
     }
     this.setState(prevState => ({
-      rows: prevState.rows
-        .slice(0)
-        .sort((a, b) => (sortDir === 'ascending' ? a[i] > b[i] : a[i] < b[i])),
+      rows: prevState.rows.slice(0).sort((a, b) => {
+        if (sortDir === 'ascending') {
+          return a[i] > b[i] ? 1 : a[i] < b[i] ? -1 : 0;
+        } else {
+          return a[i] < b[i] ? 1 : a[i] > b[i] ? -1 : 0;
+        }
+      }),
       sortedBy: i,
       sortDir: sortDir
     }));
