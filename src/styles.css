@@ -68,12 +68,12 @@ caption {
 }
 
 .lists-container {
-  display: block;
+  display: none;
 }
 
-@media (min-width: 400px) {
+@media (max-width: 400px) {
   .lists-container {
-    display: none;
+    display: block;
   }
 }
 
