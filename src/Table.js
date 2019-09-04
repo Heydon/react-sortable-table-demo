@@ -1,154 +1,151 @@
-import React from 'react';
+import React, { Fragment, useRef, useState, useEffect, useMemo } from 'react';
 
-const Arrow = props => {
-  let ascending = props.sortDir === 'ascending';
+const Arrow = ({sortDir, isCurrent}) => {
+  let ascending = sortDir === 'ascending';
   return (
     <svg viewBox="0 0 100 200" width="100" height="200">
-      {!(!ascending && props.isCurrent) && (
+      {!(!ascending && isCurrent) && (
         <polyline points="20 50, 50 20, 80 50" />
       )}
       <line x1="50" y1="20" x2="50" y2="180" />
-      {!(ascending && props.isCurrent) && (
+      {!(ascending && isCurrent) && (
         <polyline points="20 150, 50 180, 80 150" />
       )}
     </svg>
   );
 };
 
-class Table extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      tabindex: null,
-      rows: props.rows,
-      sortedBy: null,
-      sortDir: 'none'
-    };
-    this.container = React.createRef();
-    this.sortBy = this.sortBy.bind(this);
-    this.captionID =
-      'caption-' +
+const getSortedRows = (rows, sortedIndex, sortedDirection) =>
+  rows.slice(0).sort((a, b) => {
+    if (sortedDirection === 'ascending') {
+      return a[sortedIndex] > b[sortedIndex]
+        ? 1
+        : a[sortedIndex] < b[sortedIndex]
+        ? -1
+        : 0;
+    } else {
+      return a[sortedIndex] < b[sortedIndex]
+        ? 1
+        : a[sortedIndex] > b[sortedIndex]
+        ? -1
+        : 0;
+    }
+  });
+
+const Table = ({ headers, rows, rowHeaders, caption, sortable }) => {
+  const container = useRef(null);
+  const captionID = useRef(
+    'caption-' +
       Math.random()
         .toString(36)
-        .substr(2, 9);
-  }
+        .substr(2, 9)
+  );
+  const [tabIndex, setTabIndex] = useState(null);
+  const [sortedBy, setSortedBy] = useState(null);
+  const [sortDir, setSortDir] = useState('none');
 
-  sortBy(i) {
-    let sortDir;
-    let ascending = this.state.sortDir === 'ascending';
-    if (i === this.state.sortedBy) {
-      sortDir = !ascending ? 'ascending' : 'descending';
-    } else {
-      sortDir = 'ascending';
-    }
-    this.setState(prevState => ({
-      rows: prevState.rows.slice(0).sort((a, b) => {
-        if (sortDir === 'ascending') {
-          return a[i] > b[i] ? 1 : a[i] < b[i] ? -1 : 0;
-        } else {
-          return a[i] < b[i] ? 1 : a[i] > b[i] ? -1 : 0;
-        }
-      }),
-      sortedBy: i,
-      sortDir: sortDir
-    }));
-  }
-
-  componentDidMount() {
-    const { scrollWidth, clientWidth } = this.container;
+  useEffect(() => {
+    const { scrollWidth, clientWidth } = container.current;
     let scrollable = scrollWidth > clientWidth;
-    this.setState({
-      tabindex: scrollable ? '0' : null
-    });
-  }
-  render() {
-    return (
-      <div>
-        <div
-          className="table-container"
-          ref={this.container}
-          tabIndex={this.state.tabindex}
-          aria-labelledby={this.captionID}
-          role="group"
-        >
-          <table>
-            <caption id={this.captionID}>
-              {this.props.caption}
-              {this.state.tabindex === '0' && (
-                <div>
-                  <small>(scroll to see more)</small>
-                </div>
-              )}
-            </caption>
-            <tbody>
-              <tr>
-                {this.props.headers.map((header, i) => (
-                  <th
-                    role="columnheader"
-                    scope="col"
-                    key={i}
-                    aria-sort={
-                      this.state.sortedBy === i ? this.state.sortDir : 'none'
-                    }
-                  >
-                    {header}
-                    {this.props.sortable && (
-                      <button onClick={() => this.sortBy(i)}>
-                        <Arrow
-                          sortDir={this.state.sortDir}
-                          isCurrent={this.state.sortedBy === i}
-                        />
-                        <span className="visually-hidden">
-                          sort by {header} in
-                          {this.state.sortDir !== 'ascending'
-                            ? 'ascending'
-                            : 'descending'}
-                          order
-                        </span>
-                      </button>
-                    )}
-                  </th>
-                ))}
-              </tr>
-              {this.state.rows.map((row, i) => (
-                <tr key={i}>
-                  {row.map(
-                    (cell, i) =>
-                      this.props.rowHeaders && i < 1 ? (
-                        <th scope="row" key={i}>
-                          {cell}
-                        </th>
-                      ) : (
-                        <td key={i}>{cell}</td>
-                      )
+    setTabIndex(scrollable ? '0' : null);
+  }, []);
+
+  const sortedRows = useMemo(() => getSortedRows(rows, sortedBy, sortDir), [
+    rows,
+    sortedBy,
+    sortDir,
+  ]);
+
+  const sortBy = i => {
+    let updatedSortDir;
+    let ascending = sortDir === 'ascending';
+    if (i === sortedBy) {
+      updatedSortDir = !ascending ? 'ascending' : 'descending';
+    } else {
+      updatedSortDir = 'ascending';
+    }
+    setSortedBy(i);
+    setSortDir(updatedSortDir);
+  };
+
+  return (
+    <Fragment>
+      <div
+        className="table-container"
+        ref={container}
+        tabIndex={tabIndex}
+        aria-labelledby={captionID.current}
+        role="group"
+      >
+        <table>
+          <caption id={captionID.current}>
+            {caption}
+            {tabIndex === '0' && (
+              <div>
+                <small>(scroll to see more)</small>
+              </div>
+            )}
+          </caption>
+          <tbody>
+            <tr>
+              {headers.map((header, i) => (
+                <th
+                  role="columnheader"
+                  scope="col"
+                  key={i}
+                  aria-sort={sortedBy === i ? sortDir : 'none'}
+                >
+                  {header}
+                  {sortable && (
+                    <button onClick={() => sortBy(i)}>
+                      <Arrow sortDir={sortDir} isCurrent={sortedBy === i} />
+                      <span className="visually-hidden">
+                        sort by {header} in
+                        {sortDir !== 'ascending' ? 'ascending' : 'descending'}
+                        order
+                      </span>
+                    </button>
                   )}
-                </tr>
+                </th>
               ))}
-            </tbody>
-          </table>
-        </div>
-        <div className="lists-container">
-          <h2>{this.props.caption}</h2>
-          {this.props.rows.map((row, i) => (
-            <div key={i}>
-              <h3>{row[0]}</h3>
-              <dl>
-                {this.props.headers.map(
-                  (header, i) =>
-                    i > 0 && (
-                      <React.Fragment key={i}>
-                        <dt>{header}</dt>
-                        <dd>{row[i]}</dd>
-                      </React.Fragment>
-                    )
+            </tr>
+            {sortedRows.map((row, i) => (
+              <tr key={i}>
+                {row.map((cell, i) =>
+                  rowHeaders && i < 1 ? (
+                    <th scope="row" key={i}>
+                      {cell}
+                    </th>
+                  ) : (
+                    <td key={i}>{cell}</td>
+                  )
                 )}
-              </dl>
-            </div>
-          ))}
-        </div>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
-    );
-  }
-}
+      <div className="lists-container">
+        <h2>{caption}</h2>
+        {sortedRows.map((row, i) => (
+          <div key={i}>
+            <h3>{row[0]}</h3>
+            <dl>
+              {headers.map(
+                (header, i) =>
+                  i > 0 && (
+                    <Fragment key={i}>
+                      <dt>{header}</dt>
+                      <dd>{row[i]}</dd>
+                    </Fragment>
+                  )
+              )}
+            </dl>
+          </div>
+        ))}
+      </div>
+    </Fragment>
+  );
+};
 
 export default Table;
