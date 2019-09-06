@@ -1,12 +1,10 @@
 import React, { Fragment, useRef, useState, useEffect, useMemo } from 'react';
 
-const Arrow = ({sortDir, isCurrent}) => {
+const Arrow = ({ sortDir, isCurrent }) => {
   let ascending = sortDir === 'ascending';
   return (
     <svg viewBox="0 0 100 200" width="100" height="200">
-      {!(!ascending && isCurrent) && (
-        <polyline points="20 50, 50 20, 80 50" />
-      )}
+      {!(!ascending && isCurrent) && <polyline points="20 50, 50 20, 80 50" />}
       <line x1="50" y1="20" x2="50" y2="180" />
       {!(ascending && isCurrent) && (
         <polyline points="20 150, 50 180, 80 150" />
@@ -15,7 +13,10 @@ const Arrow = ({sortDir, isCurrent}) => {
   );
 };
 
-const getSortedRows = (rows, sortedIndex, sortedDirection) =>
+//Function can be seen as general and not needed in the component
+//scope. This also removes the need to declare it in the
+//dependency arrays of hooks such as useMemo.
+const sortRowsByIndex = (rows, sortedIndex, sortedDirection) =>
   rows.slice(0).sort((a, b) => {
     if (sortedDirection === 'ascending') {
       return a[sortedIndex] > b[sortedIndex]
@@ -34,6 +35,8 @@ const getSortedRows = (rows, sortedIndex, sortedDirection) =>
 
 const Table = ({ headers, rows, rowHeaders, caption, sortable }) => {
   const container = useRef(null);
+  //The captionID is calculated and stored as init value of a ref.
+  //This ensures that the ID remains constant for all renders.
   const captionID = useRef(
     'caption-' +
       Math.random()
@@ -41,16 +44,25 @@ const Table = ({ headers, rows, rowHeaders, caption, sortable }) => {
         .substr(2, 9)
   );
   const [tabIndex, setTabIndex] = useState(null);
+  //The following two state vars could be combined into an object,
+  //but keeping them separate makes the usage cleaner. It is a matter
+  //of taste.
   const [sortedBy, setSortedBy] = useState(null);
   const [sortDir, setSortDir] = useState('none');
 
+  //Declaring useEffect with an empty deps array is the same
+  //as componentDidMount in React class components.
   useEffect(() => {
     const { scrollWidth, clientWidth } = container.current;
     let scrollable = scrollWidth > clientWidth;
     setTabIndex(scrollable ? '0' : null);
   }, []);
 
-  const sortedRows = useMemo(() => getSortedRows(rows, sortedBy, sortDir), [
+  //The sorted rows are calculated directly from the prop. There is no need to
+  //repeat it on state. However, in a real world table example one would probably
+  //not want to recalc this with every render. So the useMemo hook is used to
+  //memoize the return value unless the related state changes.
+  const sortedRows = useMemo(() => sortRowsByIndex(rows, sortedBy, sortDir), [
     rows,
     sortedBy,
     sortDir,

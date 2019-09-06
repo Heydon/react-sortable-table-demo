@@ -2,6 +2,11 @@ import React from 'react';
 import './styles.css';
 import Table from './Table';
 
+//The constants are removed from the component declaration as the function
+//bodies of function components ARE the render functions. So we don't
+//want to redeclare it on every render. One COULD place it inside the
+//function and store it on a ref but as this should mimic incoming data that
+//won't be a good example here.
 const headers = ['Band', 'Singer', 'Inception', 'Label'];
 
 const rows = [
