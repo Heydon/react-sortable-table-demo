@@ -112,9 +112,7 @@ const Table = ({ headers, rows, rowHeaders, caption, sortable }) => {
                     <button onClick={() => sortBy(i)}>
                       <Arrow sortDir={sortDir} isCurrent={sortedBy === i} />
                       <span className="visually-hidden">
-                        sort by {header} in
-                        {sortDir !== 'ascending' ? 'ascending' : 'descending'}
-                        order
+                        sort by {header} in {sortDir !== 'ascending' ? 'ascending' : 'descending'} order
                       </span>
                     </button>
                   )}
